@@ -27,7 +27,8 @@ try:
     import gradio.analytics as analytics
     analytics.version_check = lambda:None
 except:...
-version=model_version=os.environ.get("version","v2")
+# version=model_version=os.environ.get("version","v2")
+version="v2"
 pretrained_sovits_name=["GPT_SoVITS/pretrained_models/s2G488k.pth", "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth","GPT_SoVITS/pretrained_models/s2Gv3.pth"]
 pretrained_gpt_name=["GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt","GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "GPT_SoVITS/pretrained_models/s1v3.ckpt"]
 
@@ -109,6 +110,7 @@ dict_language_v1 = {
     i18n("中英混合"): "zh",#按中英混合识别####不变
     i18n("日英混合"): "ja",#按日英混合识别####不变
     i18n("多语种混合"): "auto",#多语种启动切分识别语种
+    i18n("タイ語"): "th",# thai
 }
 dict_language_v2 = {
     i18n("中文"): "all_zh",#全部按中文识别
@@ -122,6 +124,7 @@ dict_language_v2 = {
     i18n("韩英混合"): "ko",#按韩英混合识别####不变
     i18n("多语种混合"): "auto",#多语种启动切分识别语种
     i18n("多语种混合(粤语)"): "auto_yue",#多语种启动切分识别语种
+    i18n("タイ語"): "th",# thai
 }
 dict_language = dict_language_v1 if version =='v1' else dict_language_v2
 
@@ -378,7 +381,7 @@ def get_first(text):
 
 from text import chinese
 def get_phones_and_bert(text,language,version,final=False):
-    if language in {"en", "all_zh", "all_ja", "all_ko", "all_yue"}:
+    if language in {"en", "all_zh", "all_ja", "all_ko", "all_yue", "th"}:
         language = language.replace("all_","")
         if language == "en":
             formattext = text
@@ -566,7 +569,7 @@ def get_tts_wav(ref_wav_path, prompt_text, prompt_language, text, text_language,
     ###s2v3暂不支持ref_free
     if not ref_free:
         phones1,bert1,norm_text1=get_phones_and_bert(prompt_text, prompt_language, version)
-
+        print(f"Phonmes gen : {phones1}")
     for i_text,text in enumerate(texts):
         # 解决输入目标文本的空行导致报错的问题
         if (len(text.strip()) == 0):
@@ -575,6 +578,7 @@ def get_tts_wav(ref_wav_path, prompt_text, prompt_language, text, text_language,
         print(i18n("实际输入的目标文本(每句):"), text)
         phones2,bert2,norm_text2=get_phones_and_bert(text, text_language, version)
         print(i18n("前端处理后的文本(每句):"), norm_text2)
+        print(f"Phonmes gen : {phones2}")
         if not ref_free:
             bert = torch.cat([bert1, bert2], 1)
             all_phoneme_ids = torch.LongTensor(phones1+phones2).to(device).unsqueeze(0)

@@ -24,6 +24,7 @@ elif size < 700 * 1024 * 1024:
     version = "v2"
 else:
     version = "v3"
+print('version:', version)
 import torch
 is_half = eval(os.environ.get("is_half", "True")) and torch.cuda.is_available()
 import math, traceback
@@ -64,6 +65,7 @@ if os.path.exists(semantic_path) == False:
     #     device = "mps"
     else:
         device = "cpu"
+    print(s2config_path)
     hps = utils.get_hparams_from_file(s2config_path)
     vq_model = SynthesizerTrn(
         hps.data.filter_length // 2 + 1,
@@ -72,6 +74,7 @@ if os.path.exists(semantic_path) == False:
         version=version,
         **hps.model
     )
+
     if is_half == True:
         vq_model = vq_model.half().to(device)
     else:
@@ -101,9 +104,10 @@ if os.path.exists(semantic_path) == False:
     with open(inp_text, "r", encoding="utf8") as f:
         lines = f.read().strip("\n").split("\n")
 
+    print('Start %d/%d'%(int(i_part),int(all_parts)))
     lines1 = []
     for line in lines[int(i_part) :: int(all_parts)]:
-        # print(line)
+        print(line)
         try:
             # wav_name,text=line.split("\t")
             wav_name, spk_name, language, text = line.split("|")
@@ -115,3 +119,5 @@ if os.path.exists(semantic_path) == False:
             print(line, traceback.format_exc())
     with open(semantic_path, "w", encoding="utf8") as f:
         f.write("\n".join(lines1))
+
+print('Finish processing')

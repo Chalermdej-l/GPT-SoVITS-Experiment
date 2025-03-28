@@ -110,6 +110,7 @@
     "填切割后音频所在目录！读取的音频文件完整路径=该目录-拼接-list文件里波形对应的文件名（不是全路径）。如果留空则使用.list文件里的绝对全路径。": "Please fill in the segmented audio files' directory! The full path of the audio file = the directory concatenated with the filename corresponding to the waveform in the list file (not the full path). If left blank, the absolute full path in the .list file will be used.",
     "多语种混合": "Multilingual Mixed",
     "多语种混合(粤语)": "Multilingual Mixed(Yue)",
+    "タイ語": "Thai",
     "实际输入的参考文本:": "Actual Input Reference Text:",
     "实际输入的目标文本(切句后):": "Actual Input Target Text (after sentence segmentation):",
     "实际输入的目标文本(每句):": "Actual Input Target Text (per sentence):",

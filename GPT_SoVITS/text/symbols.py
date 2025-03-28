@@ -398,4 +398,8 @@ arpa = {
 symbols = [pad] + c + v + ja_symbols + pu_symbols + list(arpa)
 symbols = sorted(set(symbols))
 if __name__ == "__main__":
+    print(len(c))
+    print(len(v))
+    print(len(ja_symbols))
+    print(len(pu_symbols))
     print(len(symbols))

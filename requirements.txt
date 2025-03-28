@@ -35,3 +35,9 @@ opencc==1.1.1; sys_platform == 'linux'
 python_mecab_ko; sys_platform != 'win32'
 fastapi<0.112.2
 x_transformers
+pythainlp
+num2words
+torch==2.2.2
+torchaudio
+transformers
+huggingface-hub>=0.20.0

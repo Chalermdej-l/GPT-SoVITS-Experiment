@@ -53,7 +53,7 @@ def main():
         n_gpus = 1
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = str(randint(20000, 55555))
-
+    print(f"Running on {n_gpus} GPUs")
     mp.spawn(
         run,
         nprocs=n_gpus,
@@ -62,7 +62,7 @@ def main():
             hps,
         ),
     )
-
+    print("Finish training")
 
 def run(rank, n_gpus, hps):
     global global_step
@@ -82,7 +82,7 @@ def run(rank, n_gpus, hps):
     torch.manual_seed(hps.train.seed)
     if torch.cuda.is_available():
         torch.cuda.set_device(rank)
-
+    print('Initializing model')
     train_dataset = TextAudioSpeakerLoader(hps.data)  ########
     train_sampler = DistributedBucketSampler(
         train_dataset,
@@ -139,7 +139,7 @@ def run(rank, n_gpus, hps):
         n_speakers=hps.data.n_speakers,
         **hps.model,
     ).to(device)
-
+    print('Initializing discriminator')
     net_d = MultiPeriodDiscriminator(hps.model.use_spectral_norm).cuda(rank) if torch.cuda.is_available() else MultiPeriodDiscriminator(hps.model.use_spectral_norm).to(device)
     for name, param in net_g.named_parameters():
         if not param.requires_grad:
@@ -156,7 +156,7 @@ def run(rank, n_gpus, hps):
     # te_p=net_g.enc_p.text_embedding.parameters()
     # et_p=net_g.enc_p.encoder_text.parameters()
     # mrte_p=net_g.enc_p.mrte.parameters()
-
+    print('Initializing optimizer')
     optim_g = torch.optim.AdamW(
         # filter(lambda p: p.requires_grad, net_g.parameters()),###默认所有层lr一致
         [
@@ -184,6 +184,7 @@ def run(rank, n_gpus, hps):
         betas=hps.train.betas,
         eps=hps.train.eps,
     )
+    print('Initializing learning rate scheduler')
     if torch.cuda.is_available():
         net_g = DDP(net_g, device_ids=[rank], find_unused_parameters=True)
         net_d = DDP(net_d, device_ids=[rank], find_unused_parameters=True)
@@ -249,7 +250,7 @@ def run(rank, n_gpus, hps):
         scheduler_d.step()
 
     scaler = GradScaler(enabled=hps.train.fp16_run)
-
+    logger.info('Start training from epoch {}'.format(epoch_str))
     for epoch in range(epoch_str, hps.train.epochs + 1):
         if rank == 0:
             train_and_evaluate(
@@ -598,4 +599,5 @@ def evaluate(hps, generator, eval_loader, writer_eval):
 
 
 if __name__ == "__main__":
+    print('Running the script...')
     main()

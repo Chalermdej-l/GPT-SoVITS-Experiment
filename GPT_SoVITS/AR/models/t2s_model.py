@@ -465,10 +465,14 @@ class Text2SemanticDecoder(nn.Module):
             mask=xy_attn_mask,
         )
         logits = self.ar_predict_layer(xy_dec[:, x_len:]).permute(0, 2, 1)
+        print("logits shape:", logits.shape)
+        print("targets shape:", targets.shape)
+
         # loss
         # from feiteng: 每次 duration 越多, 梯度更新也应该更多, 所以用 sum
         loss = F.cross_entropy(logits, targets, reduction="sum")
         acc = self.ar_accuracy_metric(logits.detach(), targets).item()
+        print("acc:", acc)
         return loss, acc
 
     # 需要看下这个函数和 forward 的区别以及没有 semantic 的时候 prompts 输入什么

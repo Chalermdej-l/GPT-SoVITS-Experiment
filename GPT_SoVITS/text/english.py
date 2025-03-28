@@ -5,8 +5,11 @@ import wordsegment
 from g2p_en import G2p
 
 from text.symbols import punctuation
-
 from text.symbols2 import symbols
+
+# # Big: Just so it can run
+# from symbols import punctuation
+# from symbols2 import symbols
 
 import unicodedata
 from builtins import str as unicode
@@ -372,5 +375,6 @@ def g2p(text):
 
 if __name__ == "__main__":
     print(g2p("hello"))
+    print(text_normalize("e.g. I used openai's AI tool to draw a picture."))
     print(g2p(text_normalize("e.g. I used openai's AI tool to draw a picture.")))
     print(g2p(text_normalize("In this; paper, we propose 1 DSPGAN, a GAN-based universal vocoder.")))

@@ -19,13 +19,14 @@ special = [
 
 
 def clean_text(text, language, version=None):
+    version ='v2'
     if version is None:version=os.environ.get('version', 'v2')
     if version == "v1":
         symbols = symbols_v1.symbols
-        language_module_map = {"zh": "chinese", "ja": "japanese", "en": "english"}
+        language_module_map = {"zh": "chinese", "ja": "japanese", "en": "english", "th": "thai"}
     else:
         symbols = symbols_v2.symbols
-        language_module_map = {"zh": "chinese2", "ja": "japanese", "en": "english", "ko": "korean","yue":"cantonese"}
+        language_module_map = {"zh": "chinese2", "ja": "japanese", "en": "english", "ko": "korean", "yue":"cantonese", "th": "thai"} # Add Thai
 
     if(language not in language_module_map):
         language="en"
@@ -47,6 +48,8 @@ def clean_text(text, language, version=None):
         if len(phones) < 4:
             phones = [','] + phones
         word2ph = None
+    elif language == "th":
+        phones, word2ph = language_module.g2p(norm_text)
     else:
         phones = language_module.g2p(norm_text)
         word2ph = None
@@ -55,20 +58,25 @@ def clean_text(text, language, version=None):
 
 
 def clean_special(text, language, special_s, target_symbol, version=None):
-    if version is None:version=os.environ.get('version', 'v2')
+    version = 'v2'
+    # if version is None:version=os.environ.get('version', 'v2')
     if version == "v1":
         symbols = symbols_v1.symbols
         language_module_map = {"zh": "chinese", "ja": "japanese", "en": "english"}
     else:
         symbols = symbols_v2.symbols
-        language_module_map = {"zh": "chinese2", "ja": "japanese", "en": "english", "ko": "korean","yue":"cantonese"}
+        language_module_map = {"zh": "chinese2", "ja": "japanese", "en": "english", "ko": "korean", "yue":"cantonese", "th": "thai"} # Add Thai
 
     """
     特殊静音段sp符号处理
     """
+    
     text = text.replace(special_s, ",")
     language_module = __import__("text."+language_module_map[language],fromlist=[language_module_map[language]])
     norm_text = language_module.text_normalize(text)
+
+    #big 2025-02-16 Seem the output only require phomes and not tone and other output? May need to modify need to look at other language
+
     phones = language_module.g2p(norm_text)
     new_ph = []
     for ph in phones[0]:

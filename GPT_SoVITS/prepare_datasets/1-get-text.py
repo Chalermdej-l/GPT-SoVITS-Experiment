@@ -125,6 +125,9 @@ if os.path.exists(txt_path) == False:
         "yue": "yue",
         "YUE": "yue",
         "Yue": "yue",
+        "th" : "th",
+        "TH" : "th",
+        "Th" : "th",
     }
     for line in lines[int(i_part) :: int(all_parts)]:
         try:
@@ -141,6 +144,7 @@ if os.path.exists(txt_path) == False:
 
     process(todo, res)
     opt = []
+    print(txt_path)
     for name, phones, word2ph, norm_text in res:
         opt.append("%s\t%s\t%s\t%s" % (name, phones, word2ph, norm_text))
     with open(txt_path, "w", encoding="utf8") as f:

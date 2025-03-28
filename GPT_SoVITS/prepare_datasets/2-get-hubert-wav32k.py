@@ -39,6 +39,7 @@ def my_save(fea,path):#####fix issue: torch.save doesn't support chinese path
     name=os.path.basename(path)
     # tmp_path="%s/%s%s.pth"%(dir,ttime(),i_part)
     tmp_path="%s%s.pth"%(ttime(),i_part)
+    print(dir, name)
     torch.save(fea,tmp_path)
     shutil.move(tmp_path,"%s/%s"%(dir,name))
 
@@ -121,3 +122,5 @@ if(len(nan_fails)>0 and is_half==True):
             name2go(wav[0],wav[1])
         except:
             print(wav_name,traceback.format_exc())
+
+print('Finish processing')

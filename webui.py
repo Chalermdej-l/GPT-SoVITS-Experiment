@@ -136,7 +136,8 @@ def fix_gpu_numbers(inputs):
 pretrained_sovits_name=["GPT_SoVITS/pretrained_models/s2G488k.pth", "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth","GPT_SoVITS/pretrained_models/s2Gv3.pth"]
 pretrained_gpt_name=["GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt","GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "GPT_SoVITS/pretrained_models/s1v3.ckpt"]
 
-pretrained_model_list = (pretrained_sovits_name[int(version[-1])-1],pretrained_sovits_name[int(version[-1])-1].replace("s2G","s2D"),pretrained_gpt_name[int(version[-1])-1],"GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large","GPT_SoVITS/pretrained_models/chinese-hubert-base")
+# pretrained_model_list = (pretrained_sovits_name[int(version[-1])-1],pretrained_sovits_name[int(version[-1])-1].replace("s2G","s2D"),pretrained_gpt_name[int(version[-1])-1],"GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large","GPT_SoVITS/pretrained_models/chinese-hubert-base")
+pretrained_model_list = (pretrained_sovits_name[int(version[-1])-1],pretrained_sovits_name[int(version[-1])-1].replace("s2G","s2D"),pretrained_gpt_name[int(version[-1])-1],"GPT_SoVITS/pretrained_models/thai-bert","GPT_SoVITS/pretrained_models/thai-hubert")
 
 _=''
 for i in pretrained_model_list:
@@ -361,12 +362,12 @@ def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_s
             cmd = '"%s" GPT_SoVITS/s2_train.py --config "%s"'%(python_exec,tmp_config_path)
         else:
             cmd = '"%s" GPT_SoVITS/s2_train_v3.py --config "%s"'%(python_exec,tmp_config_path)
-        yield "SoVITS训练开始：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        yield "SoVITS Training begin：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
         print(cmd)
         p_train_SoVITS = Popen(cmd, shell=True)
         p_train_SoVITS.wait()
         p_train_SoVITS=None
-        yield "SoVITS训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+        yield "SoVITS Training Completed", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
         yield "已有正在进行的SoVITS训练任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
 
@@ -411,14 +412,14 @@ def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_
         with open(tmp_config_path, "w") as f:f.write(yaml.dump(data, default_flow_style=False))
         # cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" --train_semantic_path "%s/6-name2semantic.tsv" --train_phoneme_path "%s/2-name2text.txt" --output_dir "%s/logs_s1"'%(python_exec,tmp_config_path,s1_dir,s1_dir,s1_dir)
         cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" '%(python_exec,tmp_config_path)
-        yield "GPT训练开始：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        yield "GPT Training starts：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
         print(cmd)
         p_train_GPT = Popen(cmd, shell=True)
         p_train_GPT.wait()
         p_train_GPT=None
-        yield "GPT训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+        yield "GPT Training Completed", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
-        yield "已有正在进行的GPT训练任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        yield "There is an ongoing GPT training task, which needs to be terminated before the next task can be started", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
 
 def close1Bb():
     global p_train_GPT
@@ -498,7 +499,7 @@ def open1a(inp_text,inp_wav_dir,exp_name,gpu_numbers,bert_pretrained_dir):
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1a.append(p)
-        yield "文本进程执行中", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "Text process is executing", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
         for p in ps1a:
             p.wait()
         opt = []
@@ -512,11 +513,11 @@ def open1a(inp_text,inp_wav_dir,exp_name,gpu_numbers,bert_pretrained_dir):
             f.write("\n".join(opt) + "\n")
         ps1a=[]
         if len("".join(opt)) > 0:
-            yield "文本进程成功", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
+            yield "Text process successful", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
         else:
-            yield "文本进程失败", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
+            yield "Text process failed", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
     else:
-        yield "已有正在进行的文本任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "There is an ongoing text task, which needs to be terminated before the next task can be started", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
 
 def close1a():
     global ps1a
@@ -560,7 +561,7 @@ def open1b(inp_text,inp_wav_dir,exp_name,gpu_numbers,ssl_pretrained_dir):
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1b.append(p)
-        yield "SSL提取进程执行中", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "SS Extraction process in progress", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
         for p in ps1b:
             p.wait()
         ps1b=[]
@@ -610,7 +611,7 @@ def open1c(inp_text,exp_name,gpu_numbers,pretrained_s2G_path):
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1c.append(p)
-        yield "语义token提取进程执行中", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "Semantics token Extraction process in progress", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
         for p in ps1c:
             p.wait()
         opt = ["item_name\tsemantic_audio"]
@@ -623,9 +624,9 @@ def open1c(inp_text,exp_name,gpu_numbers,pretrained_s2G_path):
         with open(path_semantic, "w", encoding="utf8") as f:
             f.write("\n".join(opt) + "\n")
         ps1c=[]
-        yield "语义token提取进程结束", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+        yield "The semantic token extraction process ends", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
-        yield "已有正在进行的语义token提取任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "There is an ongoing semantic token extraction task, which needs to be terminated before the next task can be started", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
 
 def close1c():
     global ps1c
@@ -636,7 +637,7 @@ def close1c():
             except:
                 traceback.print_exc()
         ps1c=[]
-    return "已终止所有语义token进程", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
+    return "All semantic token processes have been terminated", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
 #####inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,cnhubert_base_dir,pretrained_s2G
 ps1abc=[]
 def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,ssl_pretrained_dir,pretrained_s2G_path):
@@ -951,7 +952,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                     with gr.Row():
                         gpu_numbers1a = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     with gr.Row():
-                        bert_pretrained_dir = gr.Textbox(label=i18n("预训练的中文BERT模型路径"),value="GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large",interactive=False,lines=2)
+                        bert_pretrained_dir = gr.Textbox(label=i18n("预训练的中文BERT模型路径"),value="GPT_SoVITS/pretrained_models/thai-bert",interactive=False,lines=2)
                     with gr.Row():
                         button1a_open = gr.Button(i18n("开启文本获取"), variant="primary",visible=True)
                         button1a_close = gr.Button(i18n("终止文本获取进程"), variant="primary",visible=False)
@@ -962,7 +963,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                     with gr.Row():
                         gpu_numbers1Ba = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     with gr.Row():
-                        cnhubert_base_dir = gr.Textbox(label=i18n("预训练的SSL模型路径"),value="GPT_SoVITS/pretrained_models/chinese-hubert-base",interactive=False,lines=2)
+                        cnhubert_base_dir = gr.Textbox(label=i18n("预训练的SSL模型路径"),value="GPT_SoVITS/pretrained_models/thai-hubert",interactive=False,lines=2)
                     with gr.Row():
                         button1b_open = gr.Button(i18n("开启SSL提取"), variant="primary",visible=True)
                         button1b_close = gr.Button(i18n("终止SSL提取进程"), variant="primary",visible=False)

@@ -1,0 +1,95 @@
+[project]
+name = "gpt-sovits-experiment"
+version = "0.1.0"
+description = "A project for gpt-sovits experiments."
+readme = "README.md"
+requires-python = ">=3.10"  #  A safe lower bound. Adjust based on actual needs
+
+dependencies = [
+    "numpy==1.23.4",
+    "scipy",
+    "tensorboard",
+    "librosa==0.9.2",
+    "numba==0.56.4",
+    "pytorch-lightning",
+    "gradio>=4.0,<=4.24.0",
+    "ffmpeg-python",
+    "tqdm",
+    "funasr==1.0.27",
+    "cn2an",
+    "pypinyin",
+    "pyopenjtalk>=0.3.4",
+    "g2p_en",
+    "torchaudio",
+    "modelscope==1.10.0",
+    "sentencepiece",
+    "transformers",
+    "chardet",
+    "PyYAML",
+    "psutil",
+    "jieba_fast",
+    "jieba",
+    "split-lang",
+    "Faster_Whisper",
+    "wordsegment",
+    "rotary_embedding_torch",
+    "ToJyutping",
+    "g2pk2",
+    "ko_pron",
+    "fastapi<0.112.2",
+    "x_transformers",
+    "pythainlp",
+    "jupyterlab>=4.3.5",
+    "huggingface-hub>=0.29.1",
+    "torchvision>=0.17.2",
+    "torch==2.2.2",
+    "num2words>=0.5.14",
+    "matplotlib<3.10",
+    "torchmetrics<=1.5.0",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+isort = "^5.11.4"
+
+[tool.poetry.extras]
+macos = ["onnxruntime"]
+non_macos = ["onnxruntime-gpu"]
+non_linux = ["opencc"]
+linux = ["opencc==1.1.1"]
+non_windows = ["python_mecab_ko"]
+
+
+
+[project.optional-dependencies]
+macos = ["onnxruntime"]
+non_macos = ["onnxruntime-gpu"]
+non_linux = ["opencc"]
+linux = ["opencc==1.1.1"]
+non_windows = ["python_mecab_ko"]
+
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["GPT_SoVITS"]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu118", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu118", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+explicit = true
